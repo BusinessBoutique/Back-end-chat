@@ -1,0 +1,1 @@
+Desenvolvimento da prataforma em python pois ficará mais facil o plugin com a IA
