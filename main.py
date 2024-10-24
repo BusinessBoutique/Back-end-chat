@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse #Criar e Retornar conteudo html
 
 app = FastAPI()
@@ -26,9 +26,7 @@ html = """
     </div>
     
         <script>
-            var client_id = Date.now()
-            document.querySelector("#ws-id").textContent = client_id;
-            var ws = new WebSocket(`ws://localhost:8000/ws/${client_id}`);
+            var ws = new WebSocket(`ws://localhost:8000/ws`);
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
@@ -47,6 +45,15 @@ html = """
 </html>
 """
 
+#carregar o html
 @app.get("/")
 async def rodarhtml():
     return HTMLResponse(html)
+
+#responde ao texto enviado pelo cliente no WebSocket
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(f'O texto da mensagem era {data}')
