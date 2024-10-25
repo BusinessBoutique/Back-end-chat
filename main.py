@@ -1,5 +1,5 @@
 from fastapi import FastAPI, WebSocket
-from fastapi.responses import HTMLResponse #Criar e Retornar conteudo html
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
@@ -18,7 +18,7 @@ html = """
         <h2>Your ID: <span id="ws-id"></span></h2>
         <form action="" onsubmit="sendMessage(event)">
             <input type="text" class="form-control" id="messageText" autocomplete="off"/>
-            <button class="btn btn-outline-primary mt-2">Send</button>
+            <button class="btn btn-outline-primary mt-2">send</button>
         </form>
         <ul id='messages' class="mt-5">
         </ul>
@@ -44,16 +44,18 @@ html = """
     </body>
 </html>
 """
+def datecheck(date_value):
+    if date_value == '':
+       date_value = '[Empty]'
+    return date_value
 
-#carregar o html
 @app.get("/")
 async def rodarhtml():
     return HTMLResponse(html)
 
-#responde ao texto enviado pelo cliente no WebSocket
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    while True:
-        data = await websocket.receive_text()
-        await websocket.send_text(f'O texto da mensagem era {data}')
+    while True:   
+        date = await websocket.receive_text()
+        await websocket.send_text(f'Message text was {datecheck(date)}')
