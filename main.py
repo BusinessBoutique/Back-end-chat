@@ -38,18 +38,14 @@ html = """
             };
             function sendMessage(event) {
                 var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
+                   ws.send(input.value)
+                   input.value = ''
                 event.preventDefault()
             }
         </script>
     </body>
 </html>
 """
-def datecheck(date_value):
-    if date_value == '':
-       date_value = '[Empty]'
-    return date_value
 
 class ConnectionManager:
     def __init__(self):
@@ -81,9 +77,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
     try:
         while True:
             date = await websocket.receive_text()
-            await manager.send_personal_message(f'You wrote: {datecheck(date)}', websocket)
-            await manager.broadcast(f'Client #{client_id} says: {datecheck(date)}')
+            await manager.broadcast(f'Client #{client_id} says: {date}')
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        await manager.broadcast(f'Client #{client_id} has left the chat')
-
